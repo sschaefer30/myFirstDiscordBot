@@ -1,5 +1,5 @@
 import commandsHub from "./commands/commandsHub.js"
-
+import keys from "./keys.js"
 import Discord from "Discord.js"
 
 const client = new Discord.Client({
@@ -26,7 +26,7 @@ client.on("messageCreate", async message => {
     commandsHub(message)
 })
 
-client.login("OTAxNjAwMDU1MzIzMTQwMTU3.GH97Rm.pUSJNp-0OdXvd1WAhtOjA8ROv94MKzbwvJPyzE");
+client.login(keys.BOT_MAIN_KEY);
 
 
 /* old code for !ping command

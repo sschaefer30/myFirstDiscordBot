@@ -1,6 +1,7 @@
 import fetch from "node-fetch"
+import keys from "../keys.js"
 
-const key = "c5df6f984cca4655856172259220807"
+const key = keys.WEATHER_API_KEY
 
 export default function weatherFunc(message) {
     const content = message.content
