@@ -21,7 +21,6 @@ client.on("ready", () => {
     console.log("Ready to go!");
 })
 
-const triggers = new Set();
 client.on("messageCreate", async message => {
     commandsHub(message)
 })
