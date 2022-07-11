@@ -1,6 +1,8 @@
-import commandsHub from "./commands/commandsHub.js"
 import keys from "./keys.js"
 import Discord from "Discord.js"
+import weatherHandler from "./slash-commands/weatherHandler.js"
+import triggerHandler from "./slash-commands/triggerHandler.js"
+import commandCreation from "./command-creation.js"
 
 const client = new Discord.Client({
     allowedMentions: {
@@ -19,10 +21,42 @@ const client = new Discord.Client({
 
 client.on("ready", () => {
     console.log("Ready to go!");
+
+    const guildId = "160539215472361472"
+    const guild = client.guilds.cache.get(guildId)
+    let commands
+
+    if (guild) {
+        commands = guild.commands
+    } else {
+        commands = client.application?.commands
+    }
+    commandCreation(commands)
+    
+}) 
+
+client.on('interactionCreate', async (interaction) => {
+    if (!interaction.isCommand()) {
+        return
+    }
+
+    const { commandName, options } = interaction
+
+    if (commandName === 'ping') {
+        interaction.reply({
+            content: 'pong',
+            ephemeral: true
+        })
+    } else if (commandName === 'weather') {
+        weatherHandler(interaction, options, keys.WEATHER_API_KEY)
+    } else if (commandName === 'trigger') {
+        triggerHandler("cmd", interaction)
+    }
 })
 
+
 client.on("messageCreate", async message => {
-    commandsHub(message)
+    triggerHandler("chk", message)
 })
 
 client.login(keys.BOT_MAIN_KEY);
