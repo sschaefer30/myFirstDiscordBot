@@ -3,7 +3,16 @@ import Discord from "Discord.js"
 import weatherHandler from "./slash-commands/weatherHandler.js"
 import triggerHandler from "./slash-commands/triggerHandler.js"
 import commandCreation from "./command-creation.js"
+import optionsHandler from "./slash-commands/optionsHandler.js"
 
+let globalOptions = {
+    metric: false,
+    high_detail: true,
+    raw: false
+}
+
+const unityGuildID = "160539215472361472"
+const goblinCaveID = "684835996701163520"
 /*
     myFirstDiscordBot
 
@@ -44,8 +53,9 @@ const client = new Discord.Client({
 client.on("ready", () => {
     console.log("Ready to go!");
 
-    const guildId = "160539215472361472"
+    const guildId = goblinCaveID
     const guild = client.guilds.cache.get(guildId)
+
     let commands
 
     if (guild) {
@@ -53,6 +63,10 @@ client.on("ready", () => {
     } else {
         commands = client.application?.commands
     }
+    /*
+        Slightly jank guild.commands reset.
+    */
+    guild.commands.set([])
     commandCreation(commands)
     
 }) 
@@ -70,9 +84,11 @@ client.on('interactionCreate', async (interaction) => {
             ephemeral: true
         })
     } else if (commandName === 'weather') {
-        weatherHandler(interaction, options, keys.WEATHER_API_KEY)
+        weatherHandler(interaction, options, keys.WEATHER_API_KEY, globalOptions)
     } else if (commandName === 'trigger') {
         triggerHandler("cmd", interaction)
+    } else if (commandName === 'options') {
+        globalOptions = optionsHandler(interaction, globalOptions)
     }
 })
 
