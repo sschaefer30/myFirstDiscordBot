@@ -1,5 +1,15 @@
 import asyncTriggerHandler from "./asyncTriggerHandler.js"
 
+/*
+    '/trigger' functions handled here.
+    CURRENT FUNCTIONS: 'add', 'remove', 'display'
+
+    Triggers are handled as a set to prevent duplication.
+
+    **NOTES:
+    - Add more interesting responses to trigger words.
+*/
+
 const triggers = new Set()
 
 export default function triggerHandler(type, content) {

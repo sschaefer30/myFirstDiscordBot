@@ -1,5 +1,9 @@
 import Discord from "Discord.js"
 
+/*
+    Commands are initialized here to improve modularity.
+*/
+
 export default function commandCreation(commands) {
     commands?.create({
         name: 'ping',

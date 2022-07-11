@@ -4,6 +4,28 @@ import weatherHandler from "./slash-commands/weatherHandler.js"
 import triggerHandler from "./slash-commands/triggerHandler.js"
 import commandCreation from "./command-creation.js"
 
+/*
+    myFirstDiscordBot
+
+    Author: Scott Schaefer
+    Project (re)Started: July 9, 2022
+    Version: 0.1.0
+
+    Main file for my project. The heart of the program. 
+
+    Program Structure:
+
+    index.js { slash-commands -> {
+            triggerHandler.js-> {
+                asyncTriggerHandler.js
+            },
+            weatherHandler.js,
+        }, 
+        (HIDDEN) keys.js,
+        command-creation.js
+    }
+*/
+
 const client = new Discord.Client({
     allowedMentions: {
         parse: ['users', 'roles'],
@@ -62,7 +84,10 @@ client.on("messageCreate", async message => {
 client.login(keys.BOT_MAIN_KEY);
 
 
-/* old code for !ping command
+/* old code for !ping command. 
+
+Keep for message content random features.
+
     if (message.content === "!ping") {
         let chance = Math.random()
         let out = ""

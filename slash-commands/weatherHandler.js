@@ -1,5 +1,15 @@
 import fetch from "node-fetch"
 
+/*
+    '/weather' command handled here.
+    API call using https://www.weatherapi.com/ service.
+
+    NOTES**: 
+    - Limited API calls per month, so prevent spamming by implementing a time limit for users in the future.
+    - Add options for users, and add a cache so API calls reduced
+
+*/
+
 export default function weatherHandler(interaction, options, key) {
     const location = options.getString('city')
     const call = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${location}&aqi=no`
