@@ -7,7 +7,7 @@ import optionsHandler from "./slash-commands/optionsHandler.js"
 
 let globalOptions = {
     metric: false,
-    high_detail: true,
+    high_detail: false,
     raw: false
 }
 

@@ -1,4 +1,5 @@
 import fetch from "node-fetch"
+import { MessageEmbed } from 'discord.js'
 
 /*
     '/weather' command handled here.
@@ -126,8 +127,44 @@ function weatherOut(interaction, data, location, cache, globalOptions) {
         })
         } else {
             const temp_display = globalOptions.metric === false ? `${weatherData.temp_f}°F` : `${weatherData.temp_c}°C`
+            const feels_like_display = globalOptions.metric === false ? `${weatherData.feelslike_f}°F` : `${weatherData.feelslike_c}°C`
+
+            const weatherInfo = {
+                color: '#0099ff',
+                title: 'Weather Report',
+                thumbnail: {
+                    url: `https:${weatherData.condition.icon}`
+                },
+                description: `Your weather report for ${locationData.name}, ${locationData.region}, ${locationData.country}.`,
+                fields: [
+                    {
+                        name: 'Last Updated:',
+                        value: weatherData.last_updated
+                    },
+                    {
+                        name: 'Current Weather',
+                        value: weatherData.condition.text
+                    },
+                    {
+                        name: 'Temperature',
+                        value: temp_display
+                    },
+                    {
+                        name: 'Feels Like',
+                        value: feels_like_display
+                    },
+                    {
+                        name: 'Humidity',
+                        value: `${weatherData.humidity}%`
+                    }
+                ],
+                timestamp: new Date(),
+                footer: {
+                    text: 'Courtesy of https://www.weatherapi.com/'
+                }
+            }
             interaction.reply({
-                content: `In ${locationData.name}, ${locationData.country}, it is currently **${temp_display}** and **${weatherData.condition.text}**.`
+                embeds: [weatherInfo]
             })
         }
     }
