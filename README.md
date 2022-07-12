@@ -15,6 +15,10 @@ In CMD in correct directory to start bot: node index.js
 
 ## Versions/Updates
 
+### Version 0.2.1
+- Minor update for weather.
+- Default weather call now looks much better with a Discord embed object.
+
 ### Version 0.2.0
 - Options for the weather feature introduced!
 - Users can now toggle between Metric/Imperial units, High Detail/Low Detail display modes, and whether to view the raw weather data from the API
