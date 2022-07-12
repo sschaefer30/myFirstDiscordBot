@@ -4,6 +4,7 @@ import weatherHandler from "./slash-commands/weatherHandler.js"
 import triggerHandler from "./slash-commands/triggerHandler.js"
 import commandCreation from "./command-creation.js"
 import optionsHandler from "./slash-commands/optionsHandler.js"
+import pokemonHandler from "./slash-commands/pokemonHandler.js"
 
 let globalOptions = {
     metric: false,
@@ -12,6 +13,7 @@ let globalOptions = {
 }
 
 const unityGuildID = "160539215472361472"
+
 const goblinCaveID = "684835996701163520"
 /*
     myFirstDiscordBot
@@ -53,7 +55,7 @@ const client = new Discord.Client({
 client.on("ready", () => {
     console.log("Ready to go!");
 
-    const guildId = goblinCaveID
+    const guildId = unityGuildID
     const guild = client.guilds.cache.get(guildId)
 
     let commands
@@ -89,6 +91,8 @@ client.on('interactionCreate', async (interaction) => {
         triggerHandler("cmd", interaction)
     } else if (commandName === 'options') {
         globalOptions = optionsHandler(interaction, globalOptions)
+    } else if (commandName === 'pokemon') {
+        pokemonHandler(interaction)
     }
 })
 

@@ -24,6 +24,19 @@ export default function commandCreation(commands) {
     })
 
     commands?.create({
+        name: 'pokemon',
+        description: 'Pokemon game for discord!',
+        options: [
+            {
+                name: 'name',
+                description: 'Find information on your favorite pokemon!',
+                required: true,
+                type: Discord.Constants.ApplicationCommandOptionTypes.STRING
+            }
+        ]
+    })
+
+    commands?.create({
         name: 'trigger',
         description: 'Trigger words for this server.',
         options: [
