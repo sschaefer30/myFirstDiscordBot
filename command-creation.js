@@ -15,10 +15,30 @@ export default function commandCreation(commands) {
         description: 'Get the weather for any city in the world!',
         options: [
             {
-                name: 'city',
-                description: 'The city you want the current weather for.',
-                required: true,
-                type: Discord.Constants.ApplicationCommandOptionTypes.STRING
+                type: 'SUB_COMMAND',
+                name: 'current',
+                description: 'Current weather.',
+                options: [
+                    {
+                        name: 'city',
+                        description: 'The city you want the current weather for.',
+                        required: true,
+                        type: Discord.Constants.ApplicationCommandOptionTypes.STRING
+                    }
+                ]
+            },
+            {
+                type: 'SUB_COMMAND',
+                name: 'forecast',
+                description: "Today's weather forecast.",
+                options: [
+                    {
+                        name: 'city',
+                        description: 'The city you want today\'s forecast for',
+                        required: true,
+                        type: Discord.Constants.ApplicationCommandOptionTypes.STRING
+                    }
+                ]
             }
         ]
     })

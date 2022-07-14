@@ -7,31 +7,92 @@ import { MessageEmbed } from 'discord.js'
 
     NOTES**: 
     - Limited API calls per month, so prevent spamming by implementing a time limit for users in the future.
-    - Add options for users, and add a cache so API calls reduced
+    - Add options for air quality and alerts (forecast)
 
 */
 
 let dataMap = new Map()
+let forecastDataMap = new Map()
 
 export default function weatherHandler(interaction, options, key, globalOptions) {
+    const actionType = options.getSubcommand()
     const location = options.getString('city')
-    if (dataMap.has(location)) {
-        let last_updated_date = new Date(dataMap.get(location).current.last_updated)
-        last_updated_date.setDate(last_updated_date.getMinutes() + 30)
-        if (new Date() <= last_updated_date){
-            weatherOut(interaction, dataMap.get(location), null, true, globalOptions)
-            console.log("Cache Used! :^)")
+
+    if (actionType === 'forecast') {
+        if (forecastDataMap.has(location)) {
+            if (checkExpired(location)) {
+                weatherForecastOut(interaction, forecastDataMap.get(location), null, true, globalOptions)
+                console.log("Cache FORECAST Used!")
+                return
+            } else {
+                console.log("Cached weather outdated")
+            }
+        }
+        const call = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${location}&days=1&aqi=no&alerts=yes`
+        fetch(call)
+            .then(response => response.json())
+            .then(data => {
+                weatherForecastOut(interaction, data, location, false, globalOptions)
+            })
+    } else if (actionType === 'current'){
+        if (dataMap.has(location)) {
+            if (checkExpired(location)) {
+                weatherOut(interaction, dataMap.get(location), null, true, globalOptions)
+                console.log("Cache Used! :^)")
+                return
+            } else {
+                console.log("Cached weather outdated by 30 min + :(")
+            }
+        }
+        const call = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${location}&aqi=no`
+        fetch(call)
+            .then(response => response.json())
+            .then(data => {
+                weatherOut(interaction, data, location, false, globalOptions)
+            })
+    }
+}
+
+function checkExpired(location) {
+    let last_updated_date = new Date(dataMap.get(location).current.last_updated)
+    last_updated_date.setDate(last_updated_date.getMinutes() + 30)
+    if (new Date() <= last_updated_date) {
+        return true
+    } else {
+        return false
+    }
+}
+
+function weatherForecastOut(interaction, data, location, cache, globalOptions) {
+    if (!cache) {
+        if (data.error) {
+            interaction.reply({
+                content: "ERROR: Invalid location.",
+                ephemeral: true
+            })
             return
-        } else {
-            console.log("Cached weather outdated by 30 min + :(")
+        }
+        forecastDataMap.set(location, data)
+    }
+    const locationData = data.location
+    const currentData = data.current
+    const forecastData = data.forecast.forecastday[0]
+    
+    const forecastEmbed = {
+        title: `Weather Forecast for ${forecastData.date}`,
+        thumbnail: {
+            url: `https:${currentData.condition.icon}`
+        },
+        description: `Your weather forecast for ${locationData.name}, ${locationData.region}, ${locationData.country}.`,
+
+        timestamp: new Date(),
+        footer: {
+            text: 'Courtesy of https://www.weatherapi.com/'
         }
     }
-    const call = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${location}&aqi=no`
-    fetch(call)
-        .then(response => response.json())
-        .then(data => {
-            weatherOut(interaction, data, location, false, globalOptions)
-        })
+    interaction.reply({
+        embeds: [forecastEmbed]
+    })
 }
 
 function weatherOut(interaction, data, location, cache, globalOptions) {

@@ -15,6 +15,8 @@ let globalOptions = {
 const unityGuildID = "160539215472361472"
 
 const goblinCaveID = "684835996701163520"
+
+const FCID = "463612083859357697"
 /*
     myFirstDiscordBot
 
