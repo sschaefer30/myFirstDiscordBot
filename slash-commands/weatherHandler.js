@@ -90,8 +90,11 @@ function weatherForecastOut(interaction, data, location, cache, globalOptions) {
             text: 'Courtesy of https://www.weatherapi.com/'
         }
     }
+    const tomorrowEmbed = {
+        title: "Weather forecast hourly"
+    }
     interaction.reply({
-        embeds: [forecastEmbed]
+        embeds: [forecastEmbed, tomorrowEmbed]
     })
 }
 
