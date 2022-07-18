@@ -1,5 +1,6 @@
 import fetch from "node-fetch"
 import { MessageEmbed } from 'discord.js'
+import { Table } from 'embed-table'
 
 /*
     '/weather' command handled here.
@@ -15,6 +16,12 @@ let dataMap = new Map()
 let forecastDataMap = new Map()
 
 export default function weatherHandler(interaction, options, key, globalOptions) {
+    if (interaction.isButton()) {
+        if (interaction.customId.startsWith("weatherForecast")) {
+            weatherForecastButtonHandler(interaction)
+        }
+        return
+    }
     const actionType = options.getSubcommand()
     const location = options.getString('city')
 
@@ -77,14 +84,12 @@ function weatherForecastOut(interaction, data, location, cache, globalOptions) {
     const locationData = data.location
     const currentData = data.current
     const forecastData = data.forecast.forecastday[0]
-    
     const forecastEmbed = {
-        title: `Weather Forecast for ${forecastData.date}`,
+        title: `Weather Forecast  ${forecastData.date}`,
         thumbnail: {
             url: `https:${currentData.condition.icon}`
         },
         description: `Your weather forecast for ${locationData.name}, ${locationData.region}, ${locationData.country}.`,
-
         timestamp: new Date(),
         footer: {
             text: 'Courtesy of https://www.weatherapi.com/'
@@ -94,8 +99,35 @@ function weatherForecastOut(interaction, data, location, cache, globalOptions) {
         title: "Weather forecast hourly"
     }
     interaction.reply({
-        embeds: [forecastEmbed, tomorrowEmbed]
+        embeds: [forecastEmbed],
+        components: [
+            {
+                type: 1,
+                components: [
+                    {
+                        type: 2,
+                        label: "Forward",
+                        style: 1,
+                        custom_id: "weatherForecastForward"
+                    },
+                    {
+                        type: 2,
+                        label: "Backward",
+                        style: 1,
+                        custom_id: "weatherForecastBackward"
+                    },
+                ]
+            }
+        ]
     })
+}
+
+function weatherForecastButtonHandler(interaction) {
+    if (interaction.customId === "weatherForecastForward") {
+        console.log("fwd")
+    } else if (interaction.customId === "weatherForecastBackward") {
+        console.log("bkwd")
+    }
 }
 
 function weatherOut(interaction, data, location, cache, globalOptions) {

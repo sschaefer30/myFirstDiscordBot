@@ -77,6 +77,12 @@ client.on("ready", () => {
 
 client.on('interactionCreate', async (interaction) => {
     if (!interaction.isCommand()) {
+        if (!interaction.isButton()) {
+            return
+        }
+        if (interaction.customId.startsWith("weatherForecast")) {
+            weatherHandler(interaction)
+        }
         return
     }
 
