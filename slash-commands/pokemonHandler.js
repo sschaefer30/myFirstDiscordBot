@@ -18,11 +18,14 @@ export default function pokemonHandler(interaction) {
 function pokemonOut(interaction, data) {
     const pokeEmbed = {
         color: '#FFFF00',
-        title: data.name,
-        thumbnail: {
+        title: data.name.toUpperCase(),
+        image: {
             url: data.sprites.front_default
-        },
-        description: `${data.name} is a`
+        }
+        // thumbnail: {
+        //     url: data.sprites.front_default
+        // },
+        // description: `${data.name} is a`
     }
     console.log(data.species.url)
     fetch(data.species.url)

@@ -12,8 +12,13 @@ import { Table } from 'embed-table'
 
 */
 
+// Caches
 let dataMap = new Map()
 let forecastDataMap = new Map()
+
+// Global vars
+let forecastCurrentDisplay = null
+
 
 export default function weatherHandler(interaction, options, key, globalOptions) {
     if (interaction.isButton()) {
@@ -35,7 +40,7 @@ export default function weatherHandler(interaction, options, key, globalOptions)
                 console.log("Cached weather outdated")
             }
         }
-        const call = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${location}&days=1&aqi=no&alerts=yes`
+        const call = `http://api.weatherapi.com/v1/forecast.json?key=${key}&q=${location}&days=2&aqi=no&alerts=yes`
         fetch(call)
             .then(response => response.json())
             .then(data => {
@@ -83,46 +88,77 @@ function weatherForecastOut(interaction, data, location, cache, globalOptions) {
     }
     const locationData = data.location
     const currentData = data.current
-    const forecastData = data.forecast.forecastday[0]
+    const forecastData1 = data.forecast.forecastday[0].hour
+    const forecastData2 = data.forecast.forecastday[1].hour
+    const hourlyData = forecastData1.concat(forecastData2)
+    const myFields = []
+    let twelveHoursPlus = new Date()
+    twelveHoursPlus.setDate(twelveHoursPlus.getHours() + 8)
+    for (let i = 0; i < hourlyData.length; i++) {
+        let hourlyDataDate = new Date(hourlyData[i].time)
+        if (hourlyDataDate >= new Date() && hourlyDataDate < twelveHoursPlus) {
+            const temp_display = globalOptions.metric === false ? `${hourlyData[i].temp_f}°F` : `${hourlyData[i].temp_c}°C`
+            myFields.push({
+                name: hourlyData[i].time.slice(5, 16),
+                value: `${temp_display}, ${hourlyData[i].condition.text}`,
+                inline: true
+            })
+        }
+    }
     const forecastEmbed = {
-        title: `Weather Forecast  ${forecastData.date}`,
+        title: `Weather Forecast  ${data.forecast.forecastday[0].date}`,
         thumbnail: {
             url: `https:${currentData.condition.icon}`
         },
         description: `Your weather forecast for ${locationData.name}, ${locationData.region}, ${locationData.country}.`,
+        fields: myFields,
         timestamp: new Date(),
         footer: {
             text: 'Courtesy of https://www.weatherapi.com/'
         }
     }
-    const tomorrowEmbed = {
-        title: "Weather forecast hourly"
-    }
     interaction.reply({
-        embeds: [forecastEmbed],
-        components: [
-            {
-                type: 1,
-                components: [
-                    {
-                        type: 2,
-                        label: "Forward",
-                        style: 1,
-                        custom_id: "weatherForecastForward"
-                    },
-                    {
-                        type: 2,
-                        label: "Backward",
-                        style: 1,
-                        custom_id: "weatherForecastBackward"
-                    },
-                ]
-            }
-        ]
+        embeds: [forecastEmbed]
     })
+    // const msg = interaction.reply({
+    //     embeds: [forecastEmbed],
+    //     components: [
+    //         {
+    //             type: 1,
+    //             components: [ 
+    //                 // {
+    //                 //     type: 2,
+    //                 //     label: "Backward",
+    //                 //     style: 1,
+    //                 //     custom_id: "weatherForecastBackward"
+    //                 // },
+    //                 // {
+    //                 //     type: 2,
+    //                 //     label: "Forward",
+    //                 //     style: 1,
+    //                 //     custom_id: "weatherForecastForward"
+    //                 // },
+  
+    //             ]
+    //         }
+    //     ]
+    // })
 }
 
 function weatherForecastButtonHandler(interaction) {
+    let data = forecastCurrentDisplay
+    const locationData = data.location
+    const currentData = data.current
+    const forecastData = data.forecast.forecastday[0]
+    const hourlyData = forecastData.hour
+    interaction.reply({
+        embeds: [
+            {
+                title: "your mom",
+                description: "yupcock"
+            }
+        ]
+    })
     if (interaction.customId === "weatherForecastForward") {
         console.log("fwd")
     } else if (interaction.customId === "weatherForecastBackward") {
